@@ -6,7 +6,6 @@
 #include <iostream>
 #include "shaderClass.h"
 #include "Texture.h"
-#include "VAO.h"
 
 // Window dimensions
 const unsigned int width = 1920;
