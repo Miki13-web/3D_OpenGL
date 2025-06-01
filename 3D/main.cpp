@@ -166,7 +166,7 @@ int main()
     glEnableVertexAttribArray(2);
 
     glm::vec4 defaultSkyColor = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
-    glm::vec4 nightColor = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 nightColor = glm::vec4(0.13f, 0.31f, 0.42f, 1.0f);
 
     // Render loop
     while (!glfwWindowShouldClose(window))
@@ -197,8 +197,9 @@ int main()
         lightingShader.Activate();
 
         // Pass light properties to shader
-        glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 0.9f); // Slightly yellow sunlight
+        glm::vec4 defaultLightColor = glm::vec4(1.0f, 1.0f, 0.9f, 1.0f); // Slightly yellow sunlight
         GLuint lightColorLoc = glGetUniformLocation(lightingShader.ID, "lightColor");
+        glm::vec3 lightColor = glm::mix(nightColor, defaultLightColor, sin(lightAngle));
         glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z);
 
         GLuint lightPosLoc = glGetUniformLocation(lightingShader.ID, "lightPos");
