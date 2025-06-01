@@ -6,6 +6,7 @@
 #include <iostream>
 #include "shaderClass.h"
 #include "Texture.h"
+#include "VAO.h"
 
 // Window dimensions
 const unsigned int width = 1920;
@@ -63,6 +64,57 @@ GLfloat vertices[] = {
      -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 };
 
+GLfloat skyBoxVertices[] = {
+    // Positions          // Normals           // Texture coords
+    // Back face (col 3, row 1)
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  3.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  4.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  4.0f * 0.25f, 2.0f * 0.333333f,
+     0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  4.0f * 0.25f, 2.0f * 0.333333f,
+    -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  3.0f * 0.25f, 2.0f * 0.333333f,
+    -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  3.0f * 0.25f, 1.0f * 0.333333f,
+
+    // Front face (col 1, row 1)
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  2.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  2.0f * 0.25f, 2.0f * 0.333333f,
+     0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  2.0f * 0.25f, 2.0f * 0.333333f,
+    -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f * 0.25f, 2.0f * 0.333333f,
+    -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f * 0.25f, 1.0f * 0.333333f,
+
+    // Left face (col 0, row 1)
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f * 0.25f, 2.0f * 0.333333f,
+    -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f * 0.25f, 2.0f * 0.333333f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f * 0.25f, 1.0f * 0.333333f,
+    -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f * 0.25f, 1.0f * 0.333333f,
+    -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f * 0.25f, 1.0f * 0.333333f,
+    -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f * 0.25f, 2.0f * 0.333333f,
+
+    // Right face (col 2, row 1)
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  3.0f * 0.25f, 2.0f * 0.333333f,
+     0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  2.0f * 0.25f, 2.0f * 0.333333f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  2.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  2.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  3.0f * 0.25f, 1.0f * 0.333333f,
+     0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  3.0f * 0.25f, 2.0f * 0.333333f,
+
+     // Bottom face (col 1, row 2)
+     -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f * 0.25f, 2.0f * 0.333333f,
+      0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  2.0f * 0.25f, 2.0f * 0.333333f,
+      0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  2.0f * 0.25f, 3.0f * 0.333333f,
+      0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  2.0f * 0.25f, 3.0f * 0.333333f,
+     -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f * 0.25f, 3.0f * 0.333333f,
+     -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f * 0.25f, 2.0f * 0.333333f
+
+     // Top face (col 1, row 0)
+     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f * 0.25f, 1.0f * 0.333333f,
+      0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  2.0f * 0.25f, 1.0f * 0.333333f,
+      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  2.0f * 0.25f, 0.0f * 0.333333f,
+      0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  2.0f * 0.25f, 0.0f * 0.333333f,
+     -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f * 0.25f, 0.0f * 0.333333f,
+     -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f * 0.25f, 1.0f * 0.333333f
+};
+
 // Camera variables
 glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, 5.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -98,6 +150,7 @@ void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void renderCube(Shader& shader, Texture& texture, glm::vec3 position, glm::vec3 scale = glm::vec3(1.0f));
+void renderSkyBox(Shader& shader, Texture& skyBoxTex);
 void renderTree(Shader& shader, Texture& woodTex, Texture& leavesTex);
 void renderHouse(Shader& shader, Texture& houseTex);
 void renderCreeper(Shader& shader, Texture& creeperTex);
@@ -112,7 +165,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create window
-    GLFWwindow* window = glfwCreateWindow(width, height, "Minecraft - Projekt", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(width, height, "Maincamp - Projekt", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -136,8 +189,9 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     // Build and compile shaders
-    Shader lightingShader("default.vert", "default.frag");
+    Shader defaultShader("default.vert", "default.frag");
     Shader lightCubeShader("lightCube.vert", "lightCube.frag");
+    Shader skyBoxShader("skyBox.vert", "skyBox.frag");
 
     // Load textures
     Texture woodTex("tree.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -145,25 +199,25 @@ int main()
     Texture houseTex("house.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     Texture creeperTex("creeper.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     Texture groundTex("grass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture skyTex("skyBox.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 
-    // Vertex Array Object (VAO) and Vertex Buffer Object (VBO)
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
+    VAO cubeVAO;
+    cubeVAO.Bind();
+    VBO cubeVBO(vertices, sizeof(vertices));
+    cubeVAO.LinkAttrib(cubeVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    cubeVAO.LinkAttrib(cubeVBO, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    cubeVAO.LinkAttrib(cubeVBO, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    cubeVAO.Unbind();
+    cubeVBO.Unbind();
 
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // Normal attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    // Texture coordinate attribute
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glEnableVertexAttribArray(2);
+    VAO skyVAO;
+    skyVAO.Bind();
+    VBO skyVBO(skyBoxVertices, sizeof(skyBoxVertices));
+    skyVAO.LinkAttrib(skyVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    skyVAO.LinkAttrib(skyVBO, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    skyVAO.LinkAttrib(skyVBO, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    skyVAO.Unbind();
+    skyVBO.Unbind();
 
     glm::vec4 defaultSkyColor = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
     glm::vec4 nightColor = glm::vec4(0.13f, 0.31f, 0.42f, 1.0f);
@@ -194,50 +248,67 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Activate shader
-        lightingShader.Activate();
+        defaultShader.Activate();
 
         // Pass light properties to shader
         glm::vec4 defaultLightColor = glm::vec4(1.0f, 1.0f, 0.9f, 1.0f); // Slightly yellow sunlight
-        GLuint lightColorLoc = glGetUniformLocation(lightingShader.ID, "lightColor");
+        GLuint lightColorLoc = glGetUniformLocation(defaultShader.ID, "lightColor");
         glm::vec3 lightColor = glm::mix(nightColor, defaultLightColor, sin(lightAngle));
         glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z);
 
-        GLuint lightPosLoc = glGetUniformLocation(lightingShader.ID, "lightPos");
+        GLuint lightPosLoc = glGetUniformLocation(defaultShader.ID, "lightPos");
         glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
 
-        GLuint viewPosLoc = glGetUniformLocation(lightingShader.ID, "viewPos");
+        GLuint viewPosLoc = glGetUniformLocation(defaultShader.ID, "viewPos");
         glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
 
         // Material properties (Phong shading)
-        GLuint shininessLoc = glGetUniformLocation(lightingShader.ID, "material.shininess");
+        GLuint shininessLoc = glGetUniformLocation(defaultShader.ID, "material.shininess");
         glUniform1f(shininessLoc, 32.0f);
 
         // View/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(100.0f), (float)width / (float)height, 0.1f, 100.0f);
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-        GLuint projectionLoc = glGetUniformLocation(lightingShader.ID, "projection");
+        GLuint projectionLoc = glGetUniformLocation(defaultShader.ID, "projection");
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
 
-        GLuint viewLoc = glGetUniformLocation(lightingShader.ID, "view");
+        GLuint viewLoc = glGetUniformLocation(defaultShader.ID, "view");
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
 
         // Render ground
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
-        model = glm::scale(model, glm::vec3(30.0f, 0.1f, 30.0f));
+        model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
 
-        GLuint modelLoc = glGetUniformLocation(lightingShader.ID, "model");
+        GLuint modelLoc = glGetUniformLocation(defaultShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
 
         groundTex.Bind();
-        glBindVertexArray(VAO);
+        //glBindVertexArray(vao);
+        cubeVAO.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // Render objects
-        renderTree(lightingShader, woodTex, leavesTex);
-        renderHouse(lightingShader, houseTex);
-        renderCreeper(lightingShader, creeperTex);
+        renderTree(defaultShader, woodTex, leavesTex);
+        renderHouse(defaultShader, houseTex);
+        renderCreeper(defaultShader, creeperTex);
+
+        // Render sky
+        skyVAO.Bind();
+        skyBoxShader.Activate();
+
+        GLuint skyBoxLightColorLoc = glGetUniformLocation(skyBoxShader.ID, "lightColor");
+        glm::vec3 skyBoxlightColor = glm::mix(nightColor, defaultLightColor, sin(lightAngle));
+        glUniform3f(skyBoxLightColorLoc, skyBoxlightColor.x, skyBoxlightColor.y, skyBoxlightColor.z);
+
+        GLuint skyProjectionLoc = glGetUniformLocation(skyBoxShader.ID, "projection");
+        glUniformMatrix4fv(skyProjectionLoc, 1, GL_FALSE, &projection[0][0]);
+
+        GLuint skyViewLoc = glGetUniformLocation(skyBoxShader.ID, "view");
+        glUniformMatrix4fv(skyViewLoc, 1, GL_FALSE, &view[0][0]);
+
+        renderSkyBox(skyBoxShader, skyTex);
 
         // Also draw the light source (sun)
         lightCubeShader.Activate();
@@ -255,7 +326,8 @@ int main()
         GLuint lightModelLoc = glGetUniformLocation(lightCubeShader.ID, "model");
         glUniformMatrix4fv(lightModelLoc, 1, GL_FALSE, &model[0][0]);
 
-        glBindVertexArray(VAO);
+        //glBindVertexArray(vao);
+        cubeVAO.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         // Swap buffers and poll IO events
@@ -264,14 +336,14 @@ int main()
     }
 
     // Cleanup
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
+    cubeVAO.Delete();
+    cubeVBO.Delete();
     woodTex.Delete();
     leavesTex.Delete();
     houseTex.Delete();
     creeperTex.Delete();
     groundTex.Delete();
-    lightingShader.Delete();
+    defaultShader.Delete();
     lightCubeShader.Delete();
 
     glfwTerminate();
@@ -324,6 +396,16 @@ void renderCube(Shader& shader, Texture& texture, glm::vec3 position, glm::vec3 
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
 
     texture.Bind();
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+}
+
+void renderSkyBox(Shader& shader, Texture& skyBoxTex)
+{
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::scale(model, glm::vec3(100.0f));
+
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+    skyBoxTex.Bind();
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 

@@ -178,8 +178,19 @@
     <Image Include="house.png" />
     <Image Include="leaves.png" />
     <Image Include="sky.png" />
+    <Image Include="skyBox.png" />
     <Image Include="tree.png" />
     <Image Include="walls.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="default.frag" />
+    <None Include="default.vert" />
+    <None Include="Framebuffer.frag" />
+    <None Include="Framebuffer.vert" />
+    <None Include="lightCube.frag" />
+    <None Include="lightCube.vert" />
+    <None Include="skyBox.frag" />
+    <None Include="skyBox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
