@@ -6,7 +6,7 @@
 #include <iostream>
 #include "shaderClass.h"
 #include "Texture.h"
-
+// Piotr Drozynski
 // Window dimensions
 const unsigned int width = 1920;
 const unsigned int height = 1080;
