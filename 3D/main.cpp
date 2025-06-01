@@ -142,6 +142,7 @@ glm::vec3 creeperFront = glm::vec3(0.0f, 0.0f, -1.0f); // Initial facing directi
 // Light position (sun)
 glm::vec3 lightPos = glm::vec3(5.0f, 5.0f, 5.0f);
 float lightAngle = 0.0f;
+GLfloat lightSpeed = 1.0f;
 
 // Function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -233,7 +234,7 @@ int main()
         processInput(window);
 
         // Update light position (sun movement)
-        lightAngle += 0.5f * deltaTime;
+        lightAngle += lightSpeed * deltaTime;
         if (lightAngle > 360.0f) lightAngle -= 360.0f;
         lightPos.x = 30.0f * cos(lightAngle);
         lightPos.y = 30.0f * sin(lightAngle);
@@ -266,7 +267,7 @@ int main()
         glUniform1f(shininessLoc, 32.0f);
 
         // View/projection transformations
-        glm::mat4 projection = glm::perspective(glm::radians(100.0f), (float)width / (float)height, 0.1f, 100.0f);
+        glm::mat4 projection = glm::perspective(glm::radians(100.0f), (float)width / (float)height, 0.1f, 200.0f);
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
         GLuint projectionLoc = glGetUniformLocation(defaultShader.ID, "projection");
@@ -278,13 +279,12 @@ int main()
         // Render ground
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
-        model = glm::scale(model, glm::vec3(30.0f, 1.0f, 30.0f));
+        model = glm::scale(model, glm::vec3(50.0f, 1.0f, 50.0f));
 
         GLuint modelLoc = glGetUniformLocation(defaultShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
 
         groundTex.Bind();
-        //glBindVertexArray(vao);
         cubeVAO.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
@@ -483,6 +483,10 @@ void processInput(GLFWwindow* window)
         cameraPos += cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         cameraPos -= cameraSpeed * cameraUp;
+    if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
+        lightSpeed += 0.25f;
+    if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
+        if (lightSpeed > 0.0f) lightSpeed -= 0.25f;
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
