@@ -177,6 +177,8 @@
     <Image Include="grass.png" />
     <Image Include="house.png" />
     <Image Include="leaves.png" />
+    <Image Include="pig_head.png" />
+    <Image Include="pig_side.png" />
     <Image Include="sky.png" />
     <Image Include="skyBox.png" />
     <Image Include="tree.png" />

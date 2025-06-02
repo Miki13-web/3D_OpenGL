@@ -114,6 +114,55 @@ GLfloat skyBoxVertices[] = {
      -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f * 0.25f, 3.0f * 0.333333f
 };
 
+GLfloat pigHeadVertices[] = {
+    // Left face (teraz jako "przednia" œciana) - indeksy 0-5
+    -0.5f, -0.5f, -0.5f,  1, 0, 0,  0.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f,  1, 0, 0,  1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f,  1, 0, 0,  1.0f, 1.0f,
+    -0.5f,  0.5f,  0.5f,  1, 0, 0,  1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f,  1, 0, 0,  0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f,  1, 0, 0,  0.0f, 0.0f,
+
+    // Right face (teraz jako "tylna" œciana) - indeksy 6-11
+     0.5f, -0.5f, -0.5f,  1, 0, 0,  0.0f, 0.0f,
+     0.5f, -0.5f,  0.5f,  1, 0, 0,  1.0f, 0.0f,
+     0.5f,  0.5f,  0.5f,  1, 0, 0,  1.0f, 1.0f,
+     0.5f,  0.5f,  0.5f,  1, 0, 0,  1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f,  1, 0, 0,  0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f,  1, 0, 0,  0.0f, 0.0f,
+
+     // Front face (teraz jako "lewa" œciana) - indeksy 12-17
+     -0.5f, -0.5f,  0.5f,  0, 0, 1,  0.0f, 0.0f,
+      0.5f, -0.5f,  0.5f,  0, 0, 1,  1.0f, 0.0f,
+      0.5f,  0.5f,  0.5f,  0, 0, 1,  1.0f, 1.0f,
+      0.5f,  0.5f,  0.5f,  0, 0, 1,  1.0f, 1.0f,
+     -0.5f,  0.5f,  0.5f,  0, 0, 1,  0.0f, 1.0f,
+     -0.5f, -0.5f,  0.5f,  0, 0, 1,  0.0f, 0.0f,
+
+     // Back face (teraz jako "prawa" œciana) - indeksy 18-23
+     -0.5f, -0.5f, -0.5f,  0, 0, 1,  0.0f, 0.0f,
+      0.5f, -0.5f, -0.5f,  0, 0, 1,  1.0f, 0.0f,
+      0.5f,  0.5f, -0.5f,  0, 0, 1,  1.0f, 1.0f,
+      0.5f,  0.5f, -0.5f,  0, 0, 1,  1.0f, 1.0f,
+     -0.5f,  0.5f, -0.5f,  0, 0, 1,  0.0f, 1.0f,
+     -0.5f, -0.5f, -0.5f,  0, 0, 1,  0.0f, 0.0f,
+
+     // Bottom face - indeksy 24-29
+     -0.5f, -0.5f, -0.5f,  0, 1, 0,  0.0f, 1.0f,
+      0.5f, -0.5f, -0.5f,  0, 1, 0,  1.0f, 1.0f,
+      0.5f, -0.5f,  0.5f,  0, 1, 0,  1.0f, 0.0f,
+      0.5f, -0.5f,  0.5f,  0, 1, 0,  1.0f, 0.0f,
+     -0.5f, -0.5f,  0.5f,  0, 1, 0,  0.0f, 0.0f,
+     -0.5f, -0.5f, -0.5f,  0, 1, 0,  0.0f, 1.0f,
+
+     // Top face - indeksy 30-35
+     -0.5f,  0.5f, -0.5f,  0, 1, 0,  0.0f, 1.0f,
+      0.5f,  0.5f, -0.5f,  0, 1, 0,  1.0f, 1.0f,
+      0.5f,  0.5f,  0.5f,  0, 1, 0,  1.0f, 0.0f,
+      0.5f,  0.5f,  0.5f,  0, 1, 0,  1.0f, 0.0f,
+     -0.5f,  0.5f,  0.5f,  0, 1, 0,  0.0f, 0.0f,
+     -0.5f,  0.5f, -0.5f,  0, 1, 0,  0.0f, 1.0f
+};
 
 // Camera variables
 glm::vec3 cameraPos = glm::vec3(0.0f, 2.0f, 5.0f);
@@ -145,6 +194,12 @@ glm::vec3 lightPos = glm::vec3(5.0f, 5.0f, 5.0f);
 float lightAngle = 0.0f;
 GLfloat lightSpeed = 1.0f;
 
+// pig variables
+// Pozycja, rotacja i skala g³owy œwini
+glm::vec3 pigHeadPos = glm::vec3(6.0f, 2.5f, 6.0f);  // Przyk³adowa pozycja
+glm::vec3 pigHeadScale = glm::vec3(2.5f);  // Pocz¹tkowa skala
+
+
 // Function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
@@ -155,6 +210,7 @@ void renderSkyBox(Shader& shader, Texture& skyBoxTex);
 void renderTree(Shader& shader, Texture& woodTex, Texture& leavesTex);
 void renderHouse(Shader& shader, Texture& houseTex);
 void renderCreeper(Shader& shader, Texture& creeperTex);
+void renderPigHead(Shader& shader, Texture& headTex, Texture& sideTex, glm::vec3 position, glm::vec3 scale);
 void updateCreeper(float deltaTime, GLFWwindow* window);
 
 int main()
@@ -201,6 +257,8 @@ int main()
     Texture creeperTex("creeper.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     Texture groundTex("grass.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
     Texture skyTex("skyBox.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture pigHeadTex("pig_head.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+    Texture pigSideTex("pig_side.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 
     VAO cubeVAO;
     cubeVAO.Bind();
@@ -219,6 +277,15 @@ int main()
     skyVAO.LinkAttrib(skyVBO, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     skyVAO.Unbind();
     skyVBO.Unbind();
+
+    VAO pigHeadVAO;
+    pigHeadVAO.Bind();
+    VBO pigHeadVBO(pigHeadVertices, sizeof(pigHeadVertices));
+    pigHeadVAO.LinkAttrib(pigHeadVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    pigHeadVAO.LinkAttrib(pigHeadVBO, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    pigHeadVAO.LinkAttrib(pigHeadVBO, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+    pigHeadVAO.Unbind();
+    pigHeadVBO.Unbind();
 
     glm::vec4 defaultSkyColor = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
     glm::vec4 nightColor = glm::vec4(0.13f, 0.31f, 0.42f, 1.0f);
@@ -293,6 +360,7 @@ int main()
         renderTree(defaultShader, woodTex, leavesTex);
         renderHouse(defaultShader, houseTex);
         renderCreeper(defaultShader, creeperTex);
+        renderPigHead(defaultShader, pigHeadTex, pigSideTex, pigHeadPos, pigHeadScale);
 
         // Render sky
         skyVAO.Bind();
@@ -345,6 +413,7 @@ int main()
     groundTex.Delete();
     defaultShader.Delete();
     lightCubeShader.Delete();
+    pigSideTex.Delete();
 
     glfwTerminate();
     return 0;
@@ -466,6 +535,30 @@ void renderCreeper(Shader& shader, Texture& creeperTex)
     glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
+void renderPigHead(Shader& shader, Texture& headTex, Texture& sideTex, glm::vec3 position, glm::vec3 scale)
+{
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, position);
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)); // Obrót o 90 stopni wokó³ osi Y
+    model = glm::scale(model, scale);
+
+    GLuint modelLoc = glGetUniformLocation(shader.ID, "model");
+    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
+
+    // Renderowanie œcian z oryginalnymi indeksami
+    headTex.Bind();
+    glDrawArrays(GL_TRIANGLES, 0, 6); // Front face (teraz bêdzie z boku)
+
+    sideTex.Bind();
+    glDrawArrays(GL_TRIANGLES, 12, 6);  // Left face (teraz bêdzie z ty³u)
+    glDrawArrays(GL_TRIANGLES, 18, 6); // Right face (teraz bêdzie z przodu)
+    glDrawArrays(GL_TRIANGLES, 6, 6);  // Back face (teraz bêdzie z boku)
+
+    sideTex.Bind(); // lub headTex.Bind() dla góry/do³u
+    glDrawArrays(GL_TRIANGLES, 24, 6); // Bottom face
+    glDrawArrays(GL_TRIANGLES, 30, 6); // Top face
+}
+
 void processInput(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -485,9 +578,17 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         cameraPos -= cameraSpeed * cameraUp;
     if (glfwGetKey(window, GLFW_KEY_EQUAL) == GLFW_PRESS)
-        lightSpeed += 0.25f;
+        lightSpeed += 0.001f;
     if (glfwGetKey(window, GLFW_KEY_MINUS) == GLFW_PRESS)
-        if (lightSpeed > 0.0f) lightSpeed -= 0.25f;
+        if (lightSpeed > 0.05f) lightSpeed -= 0.001f;
+    if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
+        pigHeadScale += glm::vec3(0.1f) * deltaTime;
+    }
+    if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
+        pigHeadScale -= glm::vec3(0.1f) * deltaTime;
+        // Zabezpieczenie przed ujemn¹ skal¹
+        if (pigHeadScale.x < 0.1f) pigHeadScale = glm::vec3(0.1f);
+    }
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
