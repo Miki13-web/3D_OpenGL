@@ -196,7 +196,7 @@ GLfloat lightSpeed = 1.0f;
 
 // pig variables
 // Pozycja, rotacja i skala g³owy œwini
-glm::vec3 pigHeadPos = glm::vec3(6.0f, 2.5f, 6.0f);  // Przyk³adowa pozycja
+glm::vec3 pigHeadPos = glm::vec3(7.0f, 2.5f, 7.0f);  // Przyk³adowa pozycja
 glm::vec3 pigHeadScale = glm::vec3(2.5f);  // Pocz¹tkowa skala
 
 
@@ -212,6 +212,8 @@ void renderHouse(Shader& shader, Texture& houseTex);
 void renderCreeper(Shader& shader, Texture& creeperTex);
 void renderPigHead(Shader& shader, Texture& headTex, Texture& sideTex, glm::vec3 position, glm::vec3 scale);
 void updateCreeper(float deltaTime, GLFWwindow* window);
+
+bool blurEnabled = true;  // domyœlnie w³¹czony
 
 int main()
 {
@@ -245,10 +247,32 @@ int main()
     // Configure global OpenGL state
     glEnable(GL_DEPTH_TEST);
 
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+    // Tekstura kolorów
+    unsigned int textureColorbuffer;
+    glGenTextures(1, &textureColorbuffer);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+
+    // Renderbuffer (g³êbia + stencil)
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
     // Build and compile shaders
     Shader defaultShader("default.vert", "default.frag");
     Shader lightCubeShader("lightCube.vert", "lightCube.frag");
     Shader skyBoxShader("skyBox.vert", "skyBox.frag");
+    Shader blurShader("Framebuffer.vert", "Framebuffer.frag");
+    Shader defaultScreenShader("defaultScreen.vert", "defaultScreen.frag");
 
     // Load textures
     Texture woodTex("tree.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
@@ -290,6 +314,27 @@ int main()
     glm::vec4 defaultSkyColor = glm::vec4(0.53f, 0.81f, 0.92f, 1.0f);
     glm::vec4 nightColor = glm::vec4(0.13f, 0.31f, 0.42f, 1.0f);
 
+    float quadVertices[] = {
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+    unsigned int quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
     // Render loop
     while (!glfwWindowShouldClose(window))
     {
@@ -298,71 +343,56 @@ int main()
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
 
-        // Input
         processInput(window);
 
-        // Update light position (sun movement)
+        // --- Update light position (sun movement) ---
         lightAngle += lightSpeed * deltaTime;
         if (lightAngle > 360.0f) lightAngle -= 360.0f;
         lightPos.x = 30.0f * cos(lightAngle);
         lightPos.y = 30.0f * sin(lightAngle);
 
-        // Creeper movement when button is pressed
         updateCreeper(deltaTime, window);
 
-        // Clear screen
+        // --- 1. RENDERUJ SCENÊ DO FRAMEBUFFERA ---
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glEnable(GL_DEPTH_TEST);
+
         glm::vec4 skyColor = glm::mix(nightColor, defaultSkyColor, sin(lightAngle));
-        glClearColor(skyColor.x, skyColor.y, skyColor.z, skyColor.w); // Sky blue
+        glClearColor(skyColor.x, skyColor.y, skyColor.z, skyColor.w);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Activate shader
         defaultShader.Activate();
 
-        // Pass light properties to shader
-        glm::vec4 defaultLightColor = glm::vec4(1.0f, 1.0f, 0.9f, 1.0f); // Slightly yellow sunlight
-        GLuint lightColorLoc = glGetUniformLocation(defaultShader.ID, "lightColor");
+        glm::vec4 defaultLightColor = glm::vec4(1.0f, 1.0f, 0.9f, 1.0f);
         glm::vec3 lightColor = glm::mix(nightColor, defaultLightColor, sin(lightAngle));
-        glUniform3f(lightColorLoc, lightColor.x, lightColor.y, lightColor.z);
+        glUniform3f(glGetUniformLocation(defaultShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+        glUniform3f(glGetUniformLocation(defaultShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+        glUniform3f(glGetUniformLocation(defaultShader.ID, "viewPos"), cameraPos.x, cameraPos.y, cameraPos.z);
+        glUniform1f(glGetUniformLocation(defaultShader.ID, "material.shininess"), 32.0f);
 
-        GLuint lightPosLoc = glGetUniformLocation(defaultShader.ID, "lightPos");
-        glUniform3f(lightPosLoc, lightPos.x, lightPos.y, lightPos.z);
-
-        GLuint viewPosLoc = glGetUniformLocation(defaultShader.ID, "viewPos");
-        glUniform3f(viewPosLoc, cameraPos.x, cameraPos.y, cameraPos.z);
-
-        // Material properties (Phong shading)
-        GLuint shininessLoc = glGetUniformLocation(defaultShader.ID, "material.shininess");
-        glUniform1f(shininessLoc, 32.0f);
-
-        // View/projection transformations
         glm::mat4 projection = glm::perspective(glm::radians(100.0f), (float)width / (float)height, 0.1f, 200.0f);
         glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-        GLuint projectionLoc = glGetUniformLocation(defaultShader.ID, "projection");
-        glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, &projection[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(defaultShader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(defaultShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
 
-        GLuint viewLoc = glGetUniformLocation(defaultShader.ID, "view");
-        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, &view[0][0]);
-
-        // Render ground
+        // Ground
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, -0.5f, 0.0f));
         model = glm::scale(model, glm::vec3(50.0f, 1.0f, 50.0f));
-
-        GLuint modelLoc = glGetUniformLocation(defaultShader.ID, "model");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, &model[0][0]);
-
+        glUniformMatrix4fv(glGetUniformLocation(defaultShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         groundTex.Bind();
         cubeVAO.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // Render objects
+        // Scena
         renderTree(defaultShader, woodTex, leavesTex);
         renderHouse(defaultShader, houseTex);
         renderCreeper(defaultShader, creeperTex);
         renderPigHead(defaultShader, pigHeadTex, pigSideTex, pigHeadPos, pigHeadScale);
 
-        // Render sky
+        // Skybox (nie trzeba renderowaæ do FBO)
+       // Render sky
         skyVAO.Bind();
         skyBoxShader.Activate();
 
@@ -378,30 +408,43 @@ int main()
 
         renderSkyBox(skyBoxShader, skyTex);
 
-        // Also draw the light source (sun)
+        // Light cube
         lightCubeShader.Activate();
-
-        GLuint lightProjectionLoc = glGetUniformLocation(lightCubeShader.ID, "projection");
-        glUniformMatrix4fv(lightProjectionLoc, 1, GL_FALSE, &projection[0][0]);
-
-        GLuint lightViewLoc = glGetUniformLocation(lightCubeShader.ID, "view");
-        glUniformMatrix4fv(lightViewLoc, 1, GL_FALSE, &view[0][0]);
-
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         model = glm::mat4(1.0f);
         model = glm::translate(model, lightPos);
         model = glm::scale(model, glm::vec3(5.0f));
-
-        GLuint lightModelLoc = glGetUniformLocation(lightCubeShader.ID, "model");
-        glUniformMatrix4fv(lightModelLoc, 1, GL_FALSE, &model[0][0]);
-
-        //glBindVertexArray(vao);
+        glUniformMatrix4fv(glGetUniformLocation(lightCubeShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         cubeVAO.Bind();
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
-        // Swap buffers and poll IO events
+        // 2. Render fullscreen quad with blur if enabled, else just render normally
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // back to default framebuffer
+        glDisable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        if (blurEnabled) {
+            blurShader.Activate();
+        }
+        else {
+            // Jeœli masz shader bez efektu blur (np. po prostu render tekstury), aktywuj go,
+            // albo mo¿esz u¿yæ blurShader z kernelem "identity" (bez zmiany),
+            // albo renderowaæ quad bez shaderów (u¿yj domyœlnego)
+            // Najprostsza metoda:
+            defaultScreenShader.Activate(); // shader, który renderuje teksturê bez zmian
+        }
+
+        glBindVertexArray(quadVAO);
+        glBindTexture(GL_TEXTURE_2D, textureColorbuffer);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+
 
     // Cleanup
     cubeVAO.Delete();
@@ -588,6 +631,18 @@ void processInput(GLFWwindow* window)
         pigHeadScale -= glm::vec3(0.1f) * deltaTime;
         // Zabezpieczenie przed ujemn¹ skal¹
         if (pigHeadScale.x < 0.1f) pigHeadScale = glm::vec3(0.1f);
+    }
+
+    static bool blurKeyPressed = false;
+
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
+        if (!blurKeyPressed) { // zapobiega szybkiemu wielokrotnemu prze³¹czeniu
+            blurEnabled = !blurEnabled;
+            blurKeyPressed = true;
+        }
+    }
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE) {
+        blurKeyPressed = false;
     }
 }
 

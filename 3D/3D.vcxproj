@@ -187,6 +187,8 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="defaultScreen.frag" />
+    <None Include="defaultScreen.vert" />
     <None Include="Framebuffer.frag" />
     <None Include="Framebuffer.vert" />
     <None Include="lightCube.frag" />

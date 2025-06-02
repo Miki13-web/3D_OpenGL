@@ -132,5 +132,11 @@
     <None Include="skyBox.frag">
       <Filter>Pliki źródłowe\Shaders</Filter>
     </None>
+    <None Include="defaultScreen.frag">
+      <Filter>Pliki źródłowe\Shaders</Filter>
+    </None>
+    <None Include="defaultScreen.vert">
+      <Filter>Pliki źródłowe\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
