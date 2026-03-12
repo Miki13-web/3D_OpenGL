@@ -25,7 +25,8 @@ a Phong lighting model, and the ability to enable a Gaussian blur effect.
 ### Screenshots
 <p align="center">
   <img src="gif2.gif" width="45%" alt="Scene View 1">
-  <img src="gameplay_screen.png" width="45%" alt="Scene View 2">
+  <img src="screen_gameplay.png" width="45%" alt="Scene View 2">
+  <img src="screen_gameplay2.png" width="45%" alt="Scene View 3">
 </p>
 
 ---
