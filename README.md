@@ -24,42 +24,42 @@ a Phong lighting model, and the ability to enable a Gaussian blur effect.
 
 ### Screenshots
 <p align="center">
-  <img src="TUTAJ_WPISZ_NAZWE_ZDJECIA_1.png" width="45%" alt="Scene View 1">
-  <img src="TUTAJ_WPISZ_NAZWE_ZDJECIA_2.png" width="45%" alt="Scene View 2">
+  <img src="gif2.gif" width="45%" alt="Scene View 1">
+  <img src="gameplay_screen.png" width="45%" alt="Scene View 2">
 </p>
 
 ---
 
 ## Key Features
 
-* [cite_start]**Custom 3D Engine Architecture:** Object-oriented design separating concerns into distinct classes (VAO, VBO, EBO, Shader, Texture) for clean and maintainable code[cite: 256].
-* [cite_start]**FPS Camera System:** Fully controllable perspective camera with mouse look, zoom (scroll), and keyboard movement[cite: 34, 35, 36].
-* [cite_start]**Dynamic Phong Lighting:** Realistic lighting model utilizing ambient, diffuse, and specular components[cite: 109, 110]. [cite_start]The scene features an animated sun moving across a SkyBox, dynamically affecting object illumination and sky colors[cite: 5, 109, 176].
-* [cite_start]**Post-Processing (Framebuffers):** Implementation of an off-screen Framebuffer Object (FBO) allowing for real-time post-processing, specifically a togglable Gaussian Blur effect[cite: 205, 206, 207].
-* [cite_start]**Interactive Entities:** A movable Creeper character [cite: 5, 174] [cite_start]and a dynamically scalable Pig head[cite: 5, 175].
+**Custom 3D Engine Architecture:** Object-oriented design separating concerns into distinct classes (VAO, VBO, EBO, Shader, Texture) for clean and maintainable code.
+**FPS Camera System:** Fully controllable perspective camera with mouse look, zoom (scroll), and keyboard movement.
+**Dynamic Phong Lighting:** Realistic lighting model utilizing ambient, diffuse, and specular components. The scene features an animated sun moving across a SkyBox, dynamically affecting object illumination and sky colors.
+**Post-Processing (Framebuffers):** Implementation of an off-screen Framebuffer Object (FBO) allowing for real-time post-processing, specifically a togglable Gaussian Blur effect.
+**Interactive Entities:** A movable Creeper character and a dynamically scalable Pig head.
 
 ## 💻 Tech Stack
 
 * **Language:** C++
-* [cite_start]**Graphics API:** OpenGL 3.3 Core Profile [cite: 10]
-* [cite_start]**Libraries:** * `GLFW` - Window creation and input handling [cite: 10]
-  * [cite_start]`GLAD` - OpenGL function pointer management [cite: 10]
-  * [cite_start]`GLM` - Mathematics (matrices, vectors, transformations) [cite: 38]
-  * [cite_start]`stb_image` - Texture loading [cite: 153, 155]
+  **Graphics API:** OpenGL 3.3 Core Profile 
+  **Libraries:**  `GLFW` - Window creation and input handling 
+                  `GLAD` - OpenGL function pointer management 
+                  `GLM` - Mathematics (matrices, vectors, transformations) 
+                  `stb_image` - Texture loading 
 
 ## 🎮 Controls
 
-[cite_start]The application features a comprehensive input system for scene interaction[cite: 97]:
+The application features a comprehensive input system for scene interaction:
 
 | Action | Input |
 | :--- | :--- |
 | **Camera Movement** | `W` `A` `S` `D` |
-| **Camera Up / Down** | [cite_start]`Space` / `Left Shift` [cite: 35] |
-| **Camera Look / Zoom**| [cite_start]`Mouse` / `Scroll` [cite: 36] |
-| **Move Creeper** | [cite_start]`Arrow Keys` (Up, Down, Left, Right) [cite: 100, 174] |
-| **Scale Pig Head** | [cite_start]`Numpad +` / `Numpad -` [cite: 103, 175] |
-| **Toggle Gaussian Blur** | [cite_start]`B` [cite: 104, 207] |
-| **Adjust Light Speed** | [cite_start]`+` / `-` [cite: 102] |
+| **Camera Up / Down** | `Space` / `Left Shift`  |
+| **Camera Look / Zoom**| `Mouse` / `Scroll`  |
+| **Move Creeper** | `Arrow Keys` (Up, Down, Left, Right) |
+| **Scale Pig Head** | `Numpad +` / `Numpad -` |
+| **Toggle Gaussian Blur** | `B`  |
+| **Adjust Light Speed** | `+` / `-` |
 | **Exit** | `ESC` |
 
 ## 🛠️ Installation & Build
