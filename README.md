@@ -1,7 +1,7 @@
 <h1 align="center">Minecraft 3D Scene (OpenGL & C++)</h1>
 
 <p align="center">
-  [cite_start]<i>An interactive 3D scene inspired by the popular game Minecraft[cite: 4]. [cite_start]This project was built from scratch using modern OpenGL to demonstrate fundamental and advanced computer graphics techniques[cite: 255].</i>
+<i>An interactive 3D scene inspired by the popular game Minecraft.This project was built from scratch using modern OpenGL to demonstrate fundamental and advanced computer graphics techniques.</i>
 </p>
 
 ---
@@ -17,9 +17,7 @@ a Phong lighting model, and the ability to enable a Gaussian blur effect.
 ## 📸 Project Gallery
 
 <p align="center">
-  ![gif1](https://github.com/user-attachments/assets/8a6a5e33-5ba3-43a6-a5d1-518e01d8b7ed)
-
-  <img src="TUTAJ_WPISZ_NAZWE_GLOWNEGO_GIFA_LUB_ZDJECIA.gif" width="700" alt="Gameplay Preview">
+  <img src="gif1.gif" width="700" alt="Gameplay Preview">
   <br>
   <i>Dynamic sun lighting and post-processing blur effect in action.</i>
 </p>
